@@ -6,14 +6,14 @@ const db = require('../db/connections');
 router.get('/department', (req, res) => {
     const sql = `SELECT * FROM departments`;
 
-    db.query(sql, (err, result) => {
+    db.query(sql, (err, rows) => {
         if (err) {
             res.status(400).json({ error: err.message });
             return;
         }
         res.json({
             message: 'success',
-            data: body
+            data: rows
         });
     });
 })
@@ -24,7 +24,7 @@ router.post('/department', ({ body }, res) => {
     const sql = `INSERT INTO departments (id, title)
     VALUES (?,?)`;
 
-    db.query(sql, params, (err, result) => {
+    db.query(sql, params, (err, body) => {
         if (err) {
             res.status(400).json({ error: err.message });
             return;
