@@ -2,12 +2,43 @@ const inquirer = require('inquirer');
 const { initial } = require('lodash');
 const db = require('./db/connections');
 const cTable = require('console.table');
+const { getDepartments, getEmployees, getRoles } = require("./util/getTables.js");
+const { } = require("./util/addData.js");
+const { } = require("./util/buildArrary");
+const { } = require("./util/updateData");
+const Department = require("./lib/Department");
+const Employee = require("./lib/Employee");
+const Role = require("./lib/Role");
 
 
-
+// Array Data for Tables
+const departmentsArr = getDepartments();
+const employeesArr = getEmployees();
+const rolesArr = getRoles();
 
 
 //Questions for interacting with Database
+const addDepartment = () => {
+  return inquirer.prompt([
+    {
+      type: "input",
+      name: "title",
+      message: "What is the title of the new department?",
+      validate: titleInput => {
+        if (titleInput) {
+          return true;
+        } else {
+          console.log("Please enter a department name");
+          return false;
+        }
+      }
+    }
+  ]).then((answer) => {
+    const newDepartment = new Department(answer.title);
+
+    return init();
+  })
+}
 //prompt use what they would like to do.
 const initpromptUser = () => {
   return inquirer.prompt([
@@ -26,20 +57,20 @@ function init() {
   initpromptUser().then((answer) => {
     switch (answer.action) {
       case "view all departments":
-        // console.table(departments);
-        console.log("you want to view all departments!");
-        cTable.table(getDepartments)
-        return promptUser();
-        
+        departmentsArr = getDepartments();
+        console.table(departmentsArr);
+        return init();
       case "view all roles":
-        console.log("you want to view all roles")
-        return promptUser();
+        rolesArr = getRoles();
+        console.table(rolesArr);
+        return init();
       case "view all employees":
-        console.log("you want to view all employees")
-        return promptUser();
+        employeesArr = getEmployees();
+        console.table(employeesArr);
+        return init();
       case "add a department":
         console.log("you want to add a department")
-        break;
+        return addDepartment();
       case "add a role":
         console.log("you want to add a role")
         break;
