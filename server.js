@@ -5,7 +5,7 @@ const cTable = require('console.table');
 const { getDepartments, getEmployees, getRoles } = require("./util/getTables.js");
 const { newDepartments, newEmployees, newRoles } = require("./util/addData.js");
 const { } = require("./util/choiceArray");
-const { } = require("./util/updateData");
+const { updateRole } = require("./util/updateData");
 const Department = require("./lib/Department");
 const Employee = require("./lib/Employee");
 const Role = require("./lib/Role");
@@ -41,6 +41,57 @@ const addDepartment = () => {
     newDepartments(newDepartment);
     //
     departmentsArr = getDepartments();
+    return init();
+  })
+}
+
+//update employee role
+const updateEmployeeRole = () => {
+  return inquirer.prompt([
+    {
+      type: "input",
+      name: "firstName",
+      message: "What is the first name of the employee you want to update the role for?",
+      validate: fNameInput => {
+        if (fNameInput) {
+          return true;
+        } else {
+          console.log("Please enter a first name");
+          return false;
+        }
+      }
+    },
+    {
+      type: "input",
+      name: "lastName",
+      message: "What is the employees last name",
+      validate: lNameInput => {
+        if (lNameInput) {
+          return true;
+        } else {
+          console.log("Please enter a last name");
+          return false;
+        }
+      }
+
+    },
+    {
+      type: "input",
+      name: "role",
+      message: "What is the ID of the new role",
+      validate: idInput => {
+        if (idInput) {
+          return true;
+        } else {
+          console.log("Please enter a role ID");
+          return false;
+        }
+      }
+    }
+  ]).then((answer) => {
+    updateRole(answer);
+    employeesArr = getEmployees();
+    console.log("role updated")
     return init();
   })
 }
@@ -115,7 +166,7 @@ const addEmployee = () => {
     {
       type: "input",
       name: "lastName",
-      message: " What is the employees last name?",
+      message: "What is the employees last name?",
       validate: lNameInput => {
         if (lNameInput) {
           return true;
@@ -192,7 +243,7 @@ function init() {
         return addEmployee();
       case "update an employee role":
         console.log("you want to update an employee role")
-        break;
+        return updateEmployeeRole();
       case "quit":
         console.log("exiting")
         process.exit();
