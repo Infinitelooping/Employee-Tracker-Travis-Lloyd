@@ -3,8 +3,8 @@ const { initial } = require('lodash');
 const db = require('./db/connections');
 const cTable = require('console.table');
 const { getDepartments, getEmployees, getRoles } = require("./util/getTables.js");
-const { } = require("./util/addData.js");
-const { } = require("./util/buildArrary");
+const { newDepartments, newEmployees, newRoles } = require("./util/addData.js");
+const { } = require("./util/choiceArray");
 const { } = require("./util/updateData");
 const Department = require("./lib/Department");
 const Employee = require("./lib/Employee");
@@ -12,12 +12,14 @@ const Role = require("./lib/Role");
 
 
 // Array Data for Tables
-const departmentsArr = getDepartments();
-const employeesArr = getEmployees();
-const rolesArr = getRoles();
+let departmentsArr = getDepartments();
+let employeesArr = getEmployees();
+let rolesArr = getRoles();
 
 
 //Questions for interacting with Database
+
+//adding new department, gathering info
 const addDepartment = () => {
   return inquirer.prompt([
     {
@@ -35,10 +37,121 @@ const addDepartment = () => {
     }
   ]).then((answer) => {
     const newDepartment = new Department(answer.title);
-
+    //need to add newdepartment into the database as well
+    newDepartments(newDepartment);
+    //
+    departmentsArr = getDepartments();
     return init();
   })
 }
+
+//adding an new role, colleting info
+const addRole = () => {
+  return inquirer.prompt([
+    {
+      type: "input",
+      name: "title",
+      message: "What is title of the new role?",
+      validate: titleInput => {
+        if (titleInput) {
+          return true;
+        } else {
+          console.log("Please enter a title");
+          return false;
+        }
+      }
+    },
+    {
+      type: "input",
+      name: "salary",
+      message: "What will the salary be for this role?",
+      validate: salaryInput => {
+        if (salaryInput) {
+          return true;
+        } else {
+          console.log("Please enter a salary");
+          return false;
+        }
+      }
+
+    },
+    {
+      type: "input",
+      name: "departmentID",
+      message: "What is the ID for the associated department?",
+      validate: idInput => {
+        if (idInput) {
+          return true;
+        } else {
+          console.log("Please enter a department ID");
+          return false;
+        }
+      }
+    }
+  ]).then((answer) => {
+    const newRole = new Role(answer.title, answer.salary, answer.departmentID);
+    newRoles(newRole);
+    rolesArr = getRoles();
+    return init();
+  })
+}
+
+//adding an new employee, collecting info
+const addEmployee = () => {
+  return inquirer.prompt([
+    {
+      type: "input",
+      name: "firstName",
+      message: "What is the employees first name?",
+      validate: fNameInput => {
+        if (fNameInput) {
+          return true;
+        } else {
+          console.log("Please enter a first name");
+          return false;
+        }
+      }
+    },
+    {
+      type: "input",
+      name: "lastName",
+      message: " What is the employees last name?",
+      validate: lNameInput => {
+        if (lNameInput) {
+          return true;
+        } else {
+          console.log("Please enter a last name");
+          return false;
+        }
+      }
+
+    },
+    {
+      type: "input",
+      name: "roleID",
+      message: "What is the ID associated with this employees role?",
+      validate: idInput => {
+        if (idInput) {
+          return true;
+        } else {
+          console.log("Please enter a last name");
+          return false;
+        }
+      }
+    },
+    {
+      type: "input",
+      name: "managerName",
+      message: "Who is their manager, skip if there is no Manager",
+    }
+  ]).then((answer) => {
+    const newEmployee = new Employee(answer.firstName, answer.lastName, answer.roleID, answer.managerName);
+    newEmployees(newEmployee);
+    employeesArr = getEmployees();
+    return init();
+  })
+}
+
 //prompt use what they would like to do.
 const initpromptUser = () => {
   return inquirer.prompt([
@@ -57,15 +170,15 @@ function init() {
   initpromptUser().then((answer) => {
     switch (answer.action) {
       case "view all departments":
-        departmentsArr = getDepartments();
+        // departmentsArr = getDepartments();
         console.table(departmentsArr);
         return init();
       case "view all roles":
-        rolesArr = getRoles();
+        // rolesArr = getRoles();
         console.table(rolesArr);
         return init();
       case "view all employees":
-        employeesArr = getEmployees();
+        // employeesArr = getEmployees();
         console.table(employeesArr);
         return init();
       case "add a department":
@@ -73,10 +186,10 @@ function init() {
         return addDepartment();
       case "add a role":
         console.log("you want to add a role")
-        break;
+        return addRole();
       case "add an employee":
         console.log("you want to add an employee")
-        break;
+        return addEmployee();
       case "update an employee role":
         console.log("you want to update an employee role")
         break;
