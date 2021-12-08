@@ -6,3 +6,4 @@
 use command line to enter new information, as well as view tables of data on employees, departments, and roles.
 
 # Demo Link
+https://watch.screencastify.com/v/ubr0zP5d1CAGveVVzhbg
